@@ -11,10 +11,10 @@ SENT_IDS_FILE = "sent_ids.json"
 
 
 def get_today_roc_date():
-    now = datetime.now()
+    from zoneinfo import ZoneInfo
+    now = datetime.now(ZoneInfo("Asia/Taipei"))
     roc_year = now.year - 1911
-    return f"{roc_year}{now.month:02d}{now.day:02d}"
-
+    return f"{roc_year}/{now.month:02d}/{now.day:02d}"
 
 def load_sent_ids():
     if os.path.exists(SENT_IDS_FILE):
