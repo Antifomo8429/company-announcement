@@ -1,5 +1,2 @@
 requests
-feedparser
-beautifulsoup4
-pandas
-lxml
+playwright
