@@ -98,6 +98,32 @@ def send_discord(item: dict):
 
 
 def run():
+    def send_discord_summary(date: str, total: int, matched: int, new_items: int):
+    if new_items > 0:
+        color = 0x00cc44  # 綠色：有新通知
+        status = f"發現 {new_items} 則新重訊，已推送通知 ✅"
+    else:
+        color = 0x888888  # 灰色：無新通知
+        status = "無新命中重訊"
+
+    embed = {
+        "embeds": [{
+            "title": f"📋 MOPS 監控摘要｜{date}",
+            "color": color,
+            "fields": [
+                {"name": "今日重訊總數", "value": str(total), "inline": True},
+                {"name": "命中關鍵字", "value": str(matched), "inline": True},
+                {"name": "本次新推送", "value": str(new_items), "inline": True},
+                {"name": "狀態", "value": status, "inline": False},
+                {"name": "監控關鍵字", "value": "、".join(KEYWORDS), "inline": False},
+            ],
+            "footer": {"text": f"執行時間：{datetime.now().strftime('%H:%M:%S')}"},
+        }]
+    }
+    requests.post(DISCORD_WEBHOOK_URL, json=embed)
+
+
+def run():
     print(f"[{datetime.now().strftime('%H:%M:%S')}] 開始執行")
 
     date = get_today_roc_date()
@@ -123,8 +149,13 @@ def run():
         print(f"  ✅ 已發送：{item['公司']} - {item['主旨'][:30]}")
 
     save_sent_ids(sent_ids)
+
+    # 每次執行都發摘要
+    send_discord_summary(date, len(news), len(matched), len(new_items))
     print("完成")
 
 
 if __name__ == "__main__":
     run()
+```
+
